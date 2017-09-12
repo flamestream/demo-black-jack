@@ -66,3 +66,15 @@ class HelpCommand(ICommand):
 
 	def execute(self, player, game):
 		print('Available commands: %s' % ', '.join(game.getAvailableCommands()))
+
+class StatusCommand(ICommand):
+
+	aliases = [
+		'status',
+		'state',
+	]
+
+	def execute(self, player, game):
+		print('Deck card count: %s' % len(game.deck))
+		for p in [game.dealer] + game.players:
+			print('%s\'s hand: %s with a hand score of %s points' % (p.name, p.hand, p.getPoints()))
