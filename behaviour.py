@@ -1,3 +1,11 @@
+ERROR_MESSAGE_COMMAND_NOT_RECOGNIZED = {
+	'Command is not recognized. Please try again.': 9,
+	'Wut?': 1,
+	'Not sure that worked.': 1,
+	'You must build additional pylons.': 1,
+	"Try typing 'help'.": 3
+}
+
 class IBehaviour:
 
 	def tick(self, player, game):

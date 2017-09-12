@@ -6,14 +6,6 @@ from random import random
 from random import randint
 import behaviour
 
-ERROR_MESSAGE_COMMAND_NOT_RECOGNIZED = {
-	'Command is not recognized. Please try again.': 9,
-	'Wut?': 1,
-	'Not sure that worked.': 1,
-	'You must build additional pylons.': 1,
-	"Try typing 'help'.": 3
-}
-
 class BlackJack:
 
 	dealer = None
@@ -95,11 +87,13 @@ class BlackJack:
 		for p in self.players:
 
 			playerScore = p.getPoints()
-
+				
 			rate = 0
 			if playerScore > 21:
-				rate = houseScore > 21 and 1 or 0
+				rate = 0
 			elif len(p.hand) >= 5:
+				rate = 2
+			elif houseScore > 21:
 				rate = 2
 			elif playerScore == houseScore:
 				rate = 1
@@ -126,11 +120,11 @@ class BlackJack:
 
 		i = i.lower()
 
-		cmd = self.commands[i]
+		cmd = self.commands.get(i)
 		if cmd:
 			return cmd
 
-		for cmd in self.commands:
+		for k, cmd in self.commands.items():
 			for alias in cmd.aliases:
 				if i == alias:
 					return cmd
