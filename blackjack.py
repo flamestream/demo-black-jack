@@ -59,6 +59,7 @@ class BlackJack:
 		self.commands['pass'] = command.PassCommand()
 		self.commands['score'] = command.GetScoreCommand()
 		self.commands['hand'] = command.ViewHandCommand()
+		self.commands['status'] = command.StatusCommand()
 
 	def __repr__(self):
 		out = ''
