@@ -3,6 +3,6 @@ import behaviour
 
 game = BlackJack({
 	'Ryan': behaviour.DealerBehaviour,
-	'Duo': behaviour.HumanBehaviour
+	'Duo': behaviour.TryHardBehaviour
 })
 game.start();
