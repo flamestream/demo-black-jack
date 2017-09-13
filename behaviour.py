@@ -1,10 +1,4 @@
-ERROR_MESSAGE_COMMAND_NOT_RECOGNIZED = {
-	'Command is not recognized. Please try again.': 9,
-	'Wut?': 1,
-	'Not sure that worked.': 1,
-	'You must build additional pylons.': 1,
-	"Try typing 'help'.": 3
-}
+from message import Message
 
 class IBehaviour:
 
@@ -21,7 +15,7 @@ class HumanBehaviour(IBehaviour):
 			cmd = game.getCommand(input())
 			if (cmd):
 				break
-			print(game.getMessage(ERROR_MESSAGE_COMMAND_NOT_RECOGNIZED))
+			Message.print('ERROR_MESSAGE_COMMAND_NOT_RECOGNIZED')
 
 		return cmd
 
@@ -38,7 +32,7 @@ class TryHardBehaviour(IBehaviour):
 
 	def tick(self, player, game):
 		dealerScore = game.dealer.getPoints()
-		playerScore = player.getPoints()		
+		playerScore = player.getPoints()
 
 		if playerScore < 16 or playerScore < dealerScore:
 			return game.commands['hit']

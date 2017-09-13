@@ -18,7 +18,7 @@ class HitCommand(ICommand):
 	]
 
 	def execute(self, player, game):
-		player.hand.append(game.deck.pop())
+		game.dealCards(player)
 		lastCard = player.hand[len(player.hand) - 1]
 		print('Received %s (%s pts | %s cards)' % (lastCard, player.getPoints(), len(player.hand)))
 
@@ -71,7 +71,7 @@ class StatusCommand(ICommand):
 
 	aliases = [
 		'status',
-		'state',
+		'state'
 	]
 
 	def execute(self, player, game):

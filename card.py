@@ -1,36 +1,41 @@
+SUITS = ('♥', '♣', '♦', '♠')
+LABEL = {
+	1: 'A',
+	11: 'J',
+	12: 'Q',
+	13: 'K'
+}
+
 class Card:
 
-	number = None
+	value = None
 	suit = None
+	isVisible = None
 
-	def __init__(self, n, s):
-		self.number = n
+	def __init__(self, n, s, isVisible=False):
+		self.value = n
 		self.suit = s
+		self.isVisible = isVisible
 
 	def __repr__(self):
-		
-		displayedNumber = None;
-		if self.number == 1:
-			displayedNumber = 'A'
-		elif self.number == 11:
-			displayedNumber = 'J'
-		elif self.number == 12:
-			displayedNumber = 'Q'
-		elif self.number == 13:
-			displayedNumber = 'K'
-		else:
-			displayedNumber = self.number
 
-		displayedSuit = None
-		if self.suit == 'hearts':
-			displayedSuit = '♥'
-		elif self.suit == 'clubs':
-			displayedSuit = '♣'
-		elif self.suit == 'diamonds':
-			displayedSuit = '♦'
-		elif self.suit == 'spades':
-			displayedSuit = '♠'
-		else:
-			displayedSuit = '🂠'
+		if not self.isVisible:
+			return '🂠'
 
-		return '%s%s' % (displayedNumber, displayedSuit)
+		displayedValue = LABEL.get(self.value, self.value)
+		return '%s%s' % (self.suit, displayedValue)
+
+	@staticmethod
+	def generateDeck(count=1, minValue=1, maxValue=13):
+
+		if maxValue < minValue:
+			raise ValueError('maxValue must not be lower than minValue')
+
+		out = []
+		++maxValue
+		for i in range(0, count):
+			for suit in SUITS:
+				for n in range(minValue, maxValue):
+					out.append(Card(n, suit))
+
+		return out

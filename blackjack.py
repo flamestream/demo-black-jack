@@ -2,7 +2,6 @@ from pprint import pformat
 from player import Player
 from card import Card
 import command
-from random import random
 from random import randint
 import behaviour
 
@@ -10,48 +9,17 @@ class BlackJack:
 
 	dealer = None
 	players = []
-	cards = {}
 	deck = []
 	commands = {}
 
 	def __init__(self, playerInfo):
 
-		def fnCalculatePoints(player):
-
-			out = 0;
-
-			cardsNotAce = [c for c in player.hand if c.number != 1]
-			valueWithoutAces = sum([min(c.number, 10) for c in cardsNotAce])
-			aceCount = len(player.hand) - len(cardsNotAce)
-
-			out = valueWithoutAces;
-			if aceCount >= 1:
-				if 10 + aceCount + valueWithoutAces > 21:
-					out += aceCount
-				else:
-					out += 10 + aceCount
-
-			return out
+		# Setup dealer
+		self.dealer = Player(self, name='House', behaviour=behaviour.DealerBehaviour)
 
 		# Setup players
-		self.dealer = Player('House', fnCalculatePoints, behaviour=behaviour.DealerBehaviour)
-
 		for k, v in playerInfo.items():
-			self.players.append(Player(k, fnCalculatePoints, behaviour=v))
-
-		# Setup cards
-		for n in range(1, 14):
-			self.cards['s'+str(n)] = Card(n, 'spades')
-		for n in range(1, 14):
-			self.cards['h'+str(n)] = Card(n, 'hearts')
-		for n in range(1, 14):
-			self.cards['d'+str(n)] = Card(n, 'diamonds')
-		for n in range(1, 14):
-			self.cards['c'+str(n)] = Card(n, 'clubs')
-
-		# Setup deck
-		for i, c in self.cards.items():
-			self.deck.append(c)
+			self.players.append(Player(self, name=k, behaviour=v))
 
 		# Register all available commands
 		self.commands['help'] = command.HelpCommand()
@@ -60,6 +28,8 @@ class BlackJack:
 		self.commands['score'] = command.GetScoreCommand()
 		self.commands['hand'] = command.ViewHandCommand()
 		self.commands['status'] = command.StatusCommand()
+
+		self.initDeck(5)
 
 	def __repr__(self):
 		out = ''
@@ -70,16 +40,32 @@ class BlackJack:
 
 		return out
 
-	def shuffle(self):
+	def initDeck(self, count=1):
+		self.deck = Card.generateDeck(count)
+
+	def shuffleDeck(self):
 		for idx, val in enumerate(self.deck):
 			target = randint(0, len(self.deck) - 1)
 			self.deck[target], self.deck[idx] = self.deck[idx], self.deck[target]
 
-	def dealCards(self, numberOfCards):
-		for i in range(0, numberOfCards):
-			for player in self.players + [self.dealer]:
-				print('Give ' + str(self.deck[len(self.deck) - 1]) + ' to ' + player.name)
-				player.hand.append(self.deck.pop())
+	def emptyHands(self, isBackToDeck=True):
+		for p in self.players + [self.dealer]:
+			if isBackToDeck:
+				self.deck += p.hand
+			p.hand = []
+
+	def reset(self):
+		self.emptyHands()
+		self.shuffleDeck()
+
+	def dealCards(self, player, cardCount=1, isVisible=True):
+		out = []
+		for i in range(0, cardCount):
+			card = self.deck.pop();
+			card.isVisible = isVisible
+			player.hand.append(card)
+			out.append(card)
+		return out
 
 	def getResults(self):
 
@@ -88,7 +74,7 @@ class BlackJack:
 		for p in self.players:
 
 			playerScore = p.getPoints()
-				
+
 			rate = 0
 			if playerScore > 21:
 				rate = 0
@@ -105,7 +91,7 @@ class BlackJack:
 
 		return out
 
-	def declareWinners(self):
+	def declareResults(self):
 
 		rates = self.getResults()
 		results = {
@@ -115,7 +101,7 @@ class BlackJack:
 		}
 
 		for idx, p in enumerate(self.players):
-			print('%s has %s' % (p.name, results[rates[idx]]))
+			print('%s %s.' % (p.name, results[rates[idx]]))
 
 	def getCommand(self, i):
 
@@ -130,36 +116,50 @@ class BlackJack:
 				if i == alias:
 					return cmd
 
-	def getMessage(self, choices):
-
-		indexes = []
-		for k, v in choices.items():
-			indexes += [k] * v
-
-		targetIndex = int(random() * sum(choices.values()))
-		msg = indexes[targetIndex]
-
-		return msg
-
 	def getAvailableCommands(self):
 
 		return self.commands.keys()
 
+	def init(self):
+
+		self.shuffleDeck()
+
+		for i in range(0, 2):
+			for p in self.players + [self.dealer]:
+				# Special face-up action for last card of dealer
+				isCardFaceDown = p == self.dealer and i == 1
+				givenCards = self.dealCards(p, isVisible = not isCardFaceDown)
+				print('Dealt %s to %s' % (givenCards, p.name))
+
+		# for p in [self.dealer] + self.players:
+		# 	print("%s's hand: %s" % (p.name, p.hand))
+
+	def getPoints(self, player):
+
+		out = 0;
+
+		cardsNotAce = [c for c in player.hand if c.value != 1]
+		valueWithoutAces = sum([min(c.value, 10) for c in cardsNotAce])
+		aceCount = len(player.hand) - len(cardsNotAce)
+
+		out = valueWithoutAces;
+		if aceCount:
+			if 10 + aceCount + valueWithoutAces > 21:
+				out += aceCount
+			else:
+				out += 10 + aceCount
+
+		return out
+
 	def start(self):
 
-		self.shuffle()
-		self.dealCards(2)
+		self.init()
 
 		for p in self.players + [self.dealer]:
-
 			print("It's %s's turn." % p.name)
-
 			while p.getPoints() <= 21:
-
 				cmd = p.behaviour.tick(p, self)
-
 				if cmd.execute(p, self):
 					break
 
-
-		self.declareWinners()
+		self.declareResults()

@@ -4,16 +4,16 @@ class Player:
 	name = None
 	hand = None
 	behaviour = None
-	fnCalculatePoint = None
+	game = None
 
-	def __init__(self, n = "Unknown", fnCalculatePoint = lambda x: 0, behaviour = None):
-		self.name = n
+	def __init__(self, game, name = "Unknown", behaviour = None):
 		self.hand = []
-		self.fnCalculatePoint = fnCalculatePoint
+		self.game = game
+		self.name = name
 		self.behaviour = behaviour and behaviour() or behaviour.HumanBehaviour()
 
 	def __repr__(self):
 		return "Player: %s\n" % self.name + str(self.hand)
 
 	def getPoints(self):
-		return self.fnCalculatePoint(self)
+		return self.game.getPoints(self)
