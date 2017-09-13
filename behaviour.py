@@ -34,3 +34,13 @@ class DealerBehaviour(IBehaviour):
 
 		return game.commands['pass']
 
+class TryHardBehaviour(IBehaviour):
+
+	def tick(self, player, game):
+		dealerScore = game.dealer.getPoints()
+		playerScore = player.getPoints()		
+
+		if playerScore < 16 or playerScore < dealerScore:
+			return game.commands['hit']
+
+		return game.commands['pass']
