@@ -15,7 +15,7 @@ class BlackJack:
 	def __init__(self, playerInfo):
 
 		# Setup dealer
-		self.dealer = Player(self, name='House', behaviour=behaviour.DealerBehaviour)
+		self.dealer = Player(self, name='House', behaviour=behaviour.dealer)
 
 		# Setup players
 		for k, v in playerInfo.items():

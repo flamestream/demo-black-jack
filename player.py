@@ -10,7 +10,7 @@ class Player:
 		self.hand = []
 		self.game = game
 		self.name = name
-		self.behaviour = behaviour and behaviour() or behaviour.HumanBehaviour()
+		self.behaviour = behaviour or behaviour.human
 
 	def __repr__(self):
 		return "Player: %s\n" % self.name + str(self.hand)
