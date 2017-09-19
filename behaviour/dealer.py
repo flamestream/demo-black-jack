@@ -1,10 +1,11 @@
-from behaviour.base import Behaviour
+from behaviour._base import Behaviour
+import command
 
 class DealerBehaviour(Behaviour):
 
 	def tick(self, player, game):
-
+		
 		if player.getPoints() < 17:
-			return game.commands['hit']
+			return command.hit
 
-		return game.commands['pass']
+		return command.stand

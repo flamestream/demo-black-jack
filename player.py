@@ -15,5 +15,5 @@ class Player:
 	def __repr__(self):
 		return "Player: %s\n" % self.name + str(self.hand)
 
-	def getPoints(self):
-		return self.game.getPoints(self)
+	def getPoints(self, isInvisibleIgnored=False):
+		return self.game.getPoints(self, isInvisibleIgnored)
