@@ -9,7 +9,12 @@ class ImplementedCommand(Command):
 	]
 
 	def execute(self, player, game):
+		hasRevealedCard = False
 		for c in player.hand:
 			if not c.isVisible:
 				c.isVisible = True
-		print('Revealing hand: %s' % player.hand)
+				hasRevealedCard = True
+		if hasRevealedCard:
+			print('Revealing hand: %s' % player.hand)
+		else:
+			print("Nothing to reveal!")
