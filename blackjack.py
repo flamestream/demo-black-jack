@@ -5,29 +5,21 @@ import command
 from random import randint
 import behaviour
 
+
 class BlackJack:
 
 	dealer = None
 	players = []
 	deck = []
-	commands = {}
 
 	def __init__(self, playerInfo):
 
 		# Setup dealer
-		self.dealer = Player(self, name='House', behaviour=behaviour.dealer)
+		self.dealer = Player(self, name='House', behaviourModule=behaviour.dealer)
 
 		# Setup players
 		for k, v in playerInfo.items():
-			self.players.append(Player(self, name=k, behaviour=v))
-
-		# Register all available commands
-		self.commands['help'] = command.HelpCommand()
-		self.commands['hit'] = command.HitCommand()
-		self.commands['pass'] = command.PassCommand()
-		self.commands['score'] = command.GetScoreCommand()
-		self.commands['hand'] = command.ViewHandCommand()
-		self.commands['status'] = command.StatusCommand()
+			self.players.append(Player(self, name=k, behaviourModule=v))
 
 		self.initDeck(5)
 
@@ -103,23 +95,6 @@ class BlackJack:
 		for idx, p in enumerate(self.players):
 			print('%s %s.' % (p.name, results[rates[idx]]))
 
-	def getCommand(self, i):
-
-		i = i.lower()
-
-		cmd = self.commands.get(i)
-		if cmd:
-			return cmd
-
-		for k, cmd in self.commands.items():
-			for alias in cmd.aliases:
-				if i == alias:
-					return cmd
-
-	def getAvailableCommands(self):
-
-		return self.commands.keys()
-
 	def init(self):
 
 		self.shuffleDeck()
@@ -134,13 +109,12 @@ class BlackJack:
 		# for p in [self.dealer] + self.players:
 		# 	print("%s's hand: %s" % (p.name, p.hand))
 
-	def getPoints(self, player):
-
+	def getPoints(self, player, isInvisibleIgnored=False):
 		out = 0;
-
-		cardsNotAce = [c for c in player.hand if c.value != 1]
+		visiblePlayerHand = [c for c in player.hand if not (not c.isVisible and isInvisibleIgnored)]
+		cardsNotAce = [c for c in visiblePlayerHand if c.value != 1]
 		valueWithoutAces = sum([min(c.value, 10) for c in cardsNotAce])
-		aceCount = len(player.hand) - len(cardsNotAce)
+		aceCount = len(visiblePlayerHand) - len(cardsNotAce)
 
 		out = valueWithoutAces;
 		if aceCount:
@@ -158,8 +132,9 @@ class BlackJack:
 		for p in self.players + [self.dealer]:
 			print("It's %s's turn." % p.name)
 			while p.getPoints() <= 21:
-				cmd = p.behaviour.tick(p, self)
-				if cmd.execute(p, self):
+				commandModule = p.behaviour.tick(p, self)
+				command = commandModule.ImplementedCommand()
+				if command.execute(p, self):
 					break
 
 		self.declareResults()

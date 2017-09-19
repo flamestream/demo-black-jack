@@ -1,12 +1,13 @@
-from behaviour.base import Behaviour
+from behaviour._base import Behaviour
+import command
 
-class TryHardBehaviour(Behaviour):
+class ImplementedBehaviour(Behaviour):
 
 	def tick(self, player, game):
-		dealerScore = game.dealer.getPoints()
+		dealerScore = game.dealer.getPoints(True)
 		playerScore = player.getPoints()
 
 		if playerScore < 16 or playerScore < dealerScore:
-			return game.commands['hit']
+			return command.hit
 
-		return game.commands['pass']
+		return command.stand
