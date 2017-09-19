@@ -1,7 +1,7 @@
 from behaviour._base import Behaviour
 import command
 
-class DealerBehaviour(Behaviour):
+class ImplementedBehaviour(Behaviour):
 
 	def tick(self, player, game):
 		if player.getPoints() < 17:

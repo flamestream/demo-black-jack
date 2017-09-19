@@ -1,7 +1,6 @@
-import behaviour.tryhard
-import behaviour.dealer
-import behaviour.human
+import os as _os
+import pkgutil as _pkgutil
+import importlib as _importlib
 
-tryhard = behaviour.tryhard.TryHardBehaviour()
-dealer = behaviour.dealer.DealerBehaviour()
-human = behaviour.human.HumanBehaviour()
+for (_, _name, _) in _pkgutil.iter_modules([_os.path.dirname(__file__)]):
+    _importlib.import_module('.' + _name, __package__)

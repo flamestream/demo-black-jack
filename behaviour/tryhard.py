@@ -1,7 +1,7 @@
 from behaviour._base import Behaviour
 import command
 
-class TryHardBehaviour(Behaviour):
+class ImplementedBehaviour(Behaviour):
 
 	def tick(self, player, game):
 		dealerScore = game.dealer.getPoints(True)

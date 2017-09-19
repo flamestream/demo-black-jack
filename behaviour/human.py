@@ -16,7 +16,7 @@ def getCommand(i):
 			if i == alias:
 				return module
 
-class HumanBehaviour(Behaviour):
+class ImplementedBehaviour(Behaviour):
 
 	def tick(self, player, game):
 

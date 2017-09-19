@@ -15,11 +15,11 @@ class BlackJack:
 	def __init__(self, playerInfo):
 
 		# Setup dealer
-		self.dealer = Player(self, name='House', behaviour=behaviour.dealer)
+		self.dealer = Player(self, name='House', behaviourModule=behaviour.dealer)
 
 		# Setup players
 		for k, v in playerInfo.items():
-			self.players.append(Player(self, name=k, behaviour=v))
+			self.players.append(Player(self, name=k, behaviourModule=v))
 
 		self.initDeck(5)
 
@@ -132,9 +132,9 @@ class BlackJack:
 		for p in self.players + [self.dealer]:
 			print("It's %s's turn." % p.name)
 			while p.getPoints() <= 21:
-				cmdmod = p.behaviour.tick(p, self)
-				cmd = cmdmod.ImplementedCommand()
-				if cmd.execute(p, self):
+				commandModule = p.behaviour.tick(p, self)
+				command = commandModule.ImplementedCommand()
+				if command.execute(p, self):
 					break
 
 		self.declareResults()
