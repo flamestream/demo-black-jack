@@ -17,3 +17,7 @@ class Player:
 
 	def getPoints(self, isInvisibleIgnored=False):
 		return self.game.getPoints(self, isInvisibleIgnored)
+
+	def hasFaceDownCard(self):
+		cardInvisibilities = [not c.isVisible for c in self.hand]
+		return any(cardInvisibilities)
