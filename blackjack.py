@@ -11,11 +11,12 @@ class BlackJack:
 	dealer = None
 	players = []
 	deck = []
+	turnCount = 0
 
 	def __init__(self, playerInfo):
 
 		# Setup dealer
-		self.dealer = Player(self, name='House', behaviourModule=behaviour.dealer)
+		self.dealer = Player(self, name='House', behaviourModule=behaviour.dealer, money=1000000)
 
 		# Setup players
 		for k, v in playerInfo.items():
@@ -46,8 +47,8 @@ class BlackJack:
 				self.deck += p.hand
 			p.hand = []
 
-	def reset(self):
-		self.emptyHands()
+	def reset(self, isBackToDeck=True):
+		self.emptyHands(isBackToDeck)
 		self.shuffleDeck()
 
 	def dealCards(self, player, cardCount=1, isVisible=True):
@@ -62,7 +63,7 @@ class BlackJack:
 	def getResults(self):
 
 		houseScore = self.dealer.getPoints()
-		out = []
+		out = {}
 		for p in self.players:
 
 			playerScore = p.getPoints()
@@ -79,11 +80,11 @@ class BlackJack:
 			elif playerScore > houseScore:
 				rate = 2
 
-			out.append(rate)
+			out[p] = rate
 
 		return out
 
-	def declareResults(self):
+	def declareResults(self, betAmounts):
 
 		rates = self.getResults()
 		results = {
@@ -92,12 +93,22 @@ class BlackJack:
 			2: 'won'
 		}
 
-		for idx, p in enumerate(self.players):
-			print('%s %s.' % (p.name, results[rates[idx]]))
+		for p in self.players:
+
+			betAmount = betAmounts[p]
+			rate = rates[p]
+			gainAmount = betAmount * rate
+
+			if gainAmount:
+				p.gain(gainAmount)
+				self.dealer.gain(-gainAmount)
+			else:
+				self.dealer.gain(betAmount)
+
+			diffLabel = gainAmount and '$%d' % gainAmount or '-$%d' % betAmount
+			print('%s %s (%s)' % (p.name, results[rate], diffLabel))
 
 	def init(self):
-
-		self.shuffleDeck()
 
 		for i in range(0, 2):
 			for p in self.players + [self.dealer]:
@@ -105,9 +116,6 @@ class BlackJack:
 				isCardFaceDown = p == self.dealer and i == 1
 				givenCards = self.dealCards(p, isVisible = not isCardFaceDown)
 				print('Dealt %s to %s' % (givenCards, p.name))
-
-		# for p in [self.dealer] + self.players:
-		# 	print("%s's hand: %s" % (p.name, p.hand))
 
 	def getPoints(self, player, isInvisibleIgnored=False):
 		out = 0;
@@ -125,16 +133,38 @@ class BlackJack:
 
 		return out
 
+	def placeBets(self):
+
+		out = {}
+
+		for p in self.players:
+			betAmount = p.behaviour.bet(p, self)
+			currentMoney = p.bet(betAmount)
+			out[p] = betAmount
+			print("%s has bet $%d (Funds: $%d)" % (p.name, betAmount, currentMoney))
+
+		return out
+
 	def start(self):
 
-		self.init()
+		while True:
 
-		for p in self.players + [self.dealer]:
-			print("It's %s's turn." % p.name)
-			while p.getPoints() <= 21:
-				commandModule = p.behaviour.tick(p, self)
-				command = commandModule.ImplementedCommand()
-				if command.execute(p, self):
-					break
+			self.turnCount += 1
+			print('== TURN %d ==' % self.turnCount)
 
-		self.declareResults()
+			self.reset()
+			self.init()
+
+			betAmounts = self.placeBets()
+
+			# Main playing loop
+			for p in self.players + [self.dealer]:
+				print("It's %s's turn" % p.name)
+				while p.getPoints() <= 21:
+					commandModule = p.behaviour.play(p, self)
+					command = commandModule.ImplementedCommand()
+					if command.execute(p, self, {}):
+						break
+
+			self.declareResults(betAmounts)
+			input()

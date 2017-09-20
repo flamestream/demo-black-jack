@@ -11,7 +11,7 @@ class ImplementedCommand(Command):
 		'draw'
 	]
 
-	def execute(self, player, game):
+	def execute(self, player, game, params):
 		lastCards = game.dealCards(player)
 		lastCardStrings = []
 		for c in lastCards:

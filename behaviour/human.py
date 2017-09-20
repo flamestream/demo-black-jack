@@ -18,7 +18,36 @@ def getCommand(i):
 
 class ImplementedBehaviour(Behaviour):
 
-	def tick(self, player, game):
+
+	def bet(self, player, game):
+
+		betAmount = 0
+		print('Place your bet ($%s)' % player.money)
+
+		while True:
+
+			print('> $', end='')
+			betAmount = input()
+
+			# Check if valid number
+			try:
+				betAmount = int(betAmount)
+				if betAmount <= 0:
+					raise ValueError()
+			except ValueError:
+				Message.print('ERROR_MESSAGE_INVALID_BET_AMOUNT')
+				continue
+
+			# Check funds
+			if betAmount > player.money:
+				Message.print('ERROR_MESSAGE_INSUFFICIENT_FUNDS')
+				continue
+
+			break
+
+		return betAmount
+
+	def play(self, player, game):
 
 		cmd = None
 		while True:

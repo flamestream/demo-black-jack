@@ -11,7 +11,7 @@ class ImplementedCommand(Command):
 		'stand'
 	]
 
-	def execute(self, player, game):
+	def execute(self, player, game, params):
 		print('%s has passed.' % player.name)
 		return True
 

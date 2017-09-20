@@ -7,7 +7,15 @@ VALUES = {
 		'Not sure that worked.': 1,
 		'You must build additional pylons.': 1,
 		"Try typing 'help'.": 3
+	},
+	'ERROR_MESSAGE_INVALID_BET_AMOUNT': {
+		'Invalid bet. Please enter an amount': 1
+	},
+	'ERROR_MESSAGE_INSUFFICIENT_FUNDS': {
+		'You do not have that amount of funds.': 5,
+		'Your broke': 1
 	}
+
 }
 
 class Message:

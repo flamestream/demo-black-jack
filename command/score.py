@@ -8,6 +8,6 @@ class ImplementedCommand(Command):
 		'my score'
 	]
 
-	def execute(self, player, game):
+	def execute(self, player, game, params):
 		print('Current hand score: %s' % player.getPoints())
 

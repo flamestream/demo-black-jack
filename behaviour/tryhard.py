@@ -3,7 +3,11 @@ import command
 
 class ImplementedBehaviour(Behaviour):
 
-	def tick(self, player, game):
+	def bet(self, player, game):
+		return 100
+
+	def play(self, player, game):
+
 		dealerScore = game.dealer.getPoints(True)
 		playerScore = player.getPoints()
 

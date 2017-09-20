@@ -7,7 +7,7 @@ class ImplementedCommand(Command):
 		'state'
 	]
 
-	def execute(self, player, game):
+	def execute(self, player, game, params):
 		print('Deck card count: %s' % len(game.deck))
 		for p in [game.dealer] + game.players:
 			print('%s\'s hand: %s with a hand score of %s points' % (p.name, p.hand, p.getPoints(True)))
