@@ -3,6 +3,7 @@ import behaviour
 
 game = BlackJack({
 	'Ryan': behaviour.dealer,
-	'Duo': behaviour.human
+	'Duo': behaviour.human,
+  'Et': behaviour.basicStrat
 })
 game.start();
