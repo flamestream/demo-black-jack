@@ -8,7 +8,7 @@ class ImplementedCommand(Command):
 		'help'
 	]
 
-	def execute(self, player, game):
+	def execute(self, player, game, params):
 
 		availableCommands = [name for name, obj in inspect.getmembers(command) if not name.startswith('_')]
 

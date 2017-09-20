@@ -1,4 +1,7 @@
 class Behaviour:
 
-	def tick(self, player, game):
+	def bet(self, player, game):
+		raise NotImplementedError('Not implemented')
+
+	def play(self, player, game):
 		raise NotImplementedError('Not implemented')

@@ -8,7 +8,7 @@ class ImplementedCommand(Command):
 		'face up'
 	]
 
-	def execute(self, player, game):
+	def execute(self, player, game, params):
 		hasRevealedCard = False
 		for c in player.hand:
 			if not c.isVisible:
