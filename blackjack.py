@@ -9,11 +9,19 @@ import behaviour
 class BlackJack:
 
 	dealer = None
-	players = []
-	deck = []
-	turnCount = 0
+	players = None
+	deck = None
+	turnCount = None
+	isPauseWanted = None
 
-	def __init__(self, playerInfo):
+	def __init__(self, playerInfo, isPauseWanted=True):
+
+		# Initial values
+		self.players = []
+		self.deck = []
+		self.turnCount = 0
+
+		self.isPauseWanted = isPauseWanted
 
 		# Setup dealer
 		self.dealer = Player(self, name='House', behaviourModule=behaviour.dealer, money=1000000)
@@ -145,26 +153,31 @@ class BlackJack:
 
 		return out
 
+	def tick(self):
+
+		self.turnCount += 1
+		print('== TURN %d ==' % self.turnCount)
+
+		self.reset()
+		self.init()
+
+		betAmounts = self.placeBets()
+
+		# Main playing loop
+		for p in self.players + [self.dealer]:
+			print("It's %s's turn" % p.name)
+			while p.getPoints() <= 21:
+				commandModule = p.behaviour.play(p, self)
+				command = commandModule.ImplementedCommand()
+				if command.execute(p, self, {}):
+					break
+
+		self.declareResults(betAmounts)
+
+
 	def start(self):
 
 		while True:
+			self.tick()
+			self.isPauseWanted and input()
 
-			self.turnCount += 1
-			print('== TURN %d ==' % self.turnCount)
-
-			self.reset()
-			self.init()
-
-			betAmounts = self.placeBets()
-
-			# Main playing loop
-			for p in self.players + [self.dealer]:
-				print("It's %s's turn" % p.name)
-				while p.getPoints() <= 21:
-					commandModule = p.behaviour.play(p, self)
-					command = commandModule.ImplementedCommand()
-					if command.execute(p, self, {}):
-						break
-
-			self.declareResults(betAmounts)
-			input()
