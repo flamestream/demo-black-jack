@@ -2,8 +2,8 @@ from blackjack import BlackJack
 import behaviour
 
 game = BlackJack({
-	'Ryan': behaviour.tryhard,
-	'Duo': behaviour.human,
-  'Meh': behaviour.basicStrat
+	'Bot': behaviour.tryhard,
+	'Rob': behaviour.basic,
+	'Player': behaviour.human
 })
 game.start();
