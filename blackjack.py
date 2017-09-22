@@ -92,15 +92,10 @@ class BlackJack:
 
 		return out
 
-	def declareResults(self, betAmounts):
+	def calculateGains(self, betAmounts):
 
 		rates = self.getResults()
-		results = {
-			0: 'lost',
-			1: 'pushed',
-			2: 'won'
-		}
-
+		gains = {}
 		for p in self.players:
 
 			betAmount = betAmounts[p]
@@ -110,11 +105,30 @@ class BlackJack:
 			if gainAmount:
 				p.gain(gainAmount)
 				self.dealer.gain(-gainAmount)
+				gains[p] = gainAmount
 			else:
 				self.dealer.gain(betAmount)
+				gains[p] = -betAmount
+
+		return gains
+
+
+	def declareResults(self, betAmounts):
+
+		rates = self.getResults()
+		gains = self.calculateGains(betAmounts)
+		results = {
+			0: 'lost',
+			1: 'pushed',
+			2: 'won'
+		}
+
+		for player, gainAmount in gains.items():
+
+			rate = rates[player]
 
 			diffLabel = gainAmount and '$%d' % gainAmount or '-$%d' % betAmount
-			print('%s %s (%s)' % (p.name, results[rate], diffLabel))
+			print('%s %s (%s)' % (player.name, results[rate], diffLabel))
 
 	def init(self):
 
