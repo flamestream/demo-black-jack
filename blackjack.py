@@ -117,6 +117,7 @@ class BlackJack:
 
 		rates = self.getResults()
 		gains = self.calculateGains(betAmounts)
+		stats = {}
 		results = {
 			0: 'lost',
 			1: 'pushed',
@@ -128,7 +129,11 @@ class BlackJack:
 			rate = rates[player]
 
 			diffLabel = gainAmount and '$%d' % gainAmount or '-$%d' % betAmount
+			stats[player] = {"outcome":rate, "diff":gainAmount}
 			print('%s %s (%s)' % (player.name, results[rate], diffLabel))
+
+
+		return stats
 
 	def init(self):
 
@@ -186,8 +191,7 @@ class BlackJack:
 				if command.execute(p, self, {}):
 					break
 
-		self.declareResults(betAmounts)
-
+		return self.declareResults(betAmounts)
 
 	def start(self):
 
